@@ -1,86 +1,51 @@
-from typing import Literal
-from langchain_core.messages import HumanMessage, SystemMessage, RemoveMessage
-from langgraph.graph import MessagesState
-from langgraph.graph import StateGraph, START, END
+import os
+import requests
 
-# We will use this model for both the conversation and the summarization
-from langchain_openai import ChatOpenAI
-model = ChatOpenAI(model="gpt-4o", temperature=0) 
+from dotenv import load_dotenv
 
-# State class to store messages and summary
-class State(MessagesState):
-    summary: str
-    
-# Define the logic to call the model
-def call_model(state: State):
-    
-    # Get summary if it exists
-    summary = state.get("summary", "")
+load_dotenv()
 
-    # If there is summary, then we add it to messages
-    if summary:
-        
-        # Add summary to system message
-        system_message = f"Summary of conversation earlier: {summary}"
+OWNER = os.getenv("GH_OWNER")
+REPO = os.getenv("GH_REPO")
+TOKEN = os.getenv("GH_TOKEN")
+BRANCH = os.getenv("GH_BRANCH", "main") 
 
-        # Append summary to any newer messages
-        messages = [SystemMessage(content=system_message)] + state["messages"]
-    
-    else:
-        messages = state["messages"]
-    
-    response = model.invoke(messages)
-    return {"messages": response}
+def download_github_folder(folder_path, local_dir):
+    headers = {
+        "Authorization": f"token {TOKEN}",
+        "Accept": "application/vnd.github.v3+json"
+    }
 
-# Determine whether to end or summarize the conversation
-def should_continue(state: State) -> Literal["summarize_conversation", "__end__"]:
-    
-    """Return the next node to execute."""
-    
-    messages = state["messages"]
-    
-    # If there are more than six messages, then we summarize the conversation
-    if len(messages) > 6:
-        return "summarize_conversation"
-    
-    # Otherwise we can just end
-    return END
+    def download_recursive(api_url, base_folder):
+        response = requests.get(api_url, headers=headers)
+        response.raise_for_status()
+        items = response.json()
 
-def summarize_conversation(state: State):
-    
-    # First get the summary if it exists
-    summary = state.get("summary", "")
+        if not isinstance(items, list):
+            items = [items]
 
-    # Create our summarization prompt 
-    if summary:
-        
-        # If a summary already exists, add it to the prompt
-        summary_message = (
-            f"This is summary of the conversation to date: {summary}\n\n"
-            "Extend the summary by taking into account the new messages above:"
-        )
-        
-    else:
-        # If no summary exists, just create a new one
-        summary_message = "Create a summary of the conversation above:"
+        for item in items:
+            item_path = item["path"]
+            local_path = os.path.join(base_folder, os.path.relpath(item_path, folder_path))
 
-    # Add prompt to our history
-    messages = state["messages"] + [HumanMessage(content=summary_message)]
-    response = model.invoke(messages)
-    
-    # Delete all but the 2 most recent messages and add our summary to the state 
-    delete_messages = [RemoveMessage(id=m.id) for m in state["messages"][:-2]]
-    return {"summary": response.content, "messages": delete_messages}
+            if item["type"] == "dir":
+                os.makedirs(local_path, exist_ok=True)
+                download_recursive(item["url"], base_folder)
+            elif item["type"] == "file":
+                file_data = requests.get(item["download_url"], headers=headers).content
+                os.makedirs(os.path.dirname(local_path), exist_ok=True)
+                with open(local_path, "wb") as f:
+                    f.write(file_data)
+                print(f"✅ Downloaded: {item_path}")
+            else:
+                print(f"⚠️ Skipping unsupported type: {item['type']} at {item_path}")
 
-# Define a new graph
-workflow = StateGraph(State)
-workflow.add_node("conversation", call_model)
-workflow.add_node(summarize_conversation)
+    os.makedirs(local_dir, exist_ok=True)
+    api_url = f"https://api.github.com/repos/{OWNER}/{REPO}/contents/{folder_path}?ref={BRANCH}"
+    download_recursive(api_url, local_dir)
 
-# Set the entrypoint as conversation
-workflow.add_edge(START, "conversation")
-workflow.add_conditional_edges("conversation", should_continue)
-workflow.add_edge("summarize_conversation", END)
+# Upload local folder 'my_local_folder' to GitHub under 'project/' directory
+# upload_folder_to_github(local_folder="my_local_folder", repo_path="project", commit_message="Upload via script")
 
-# Compile
-graph = workflow.compile()
+# Download 'project/' folder from GitHub repo to local folder 'downloaded_project'
+download_github_folder(folder_path="", local_dir="project")
