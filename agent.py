@@ -1,86 +1,51 @@
-from typing import Literal
-from langchain_core.messages import HumanMessage, SystemMessage, RemoveMessage
-from langgraph.graph import MessagesState
-from langgraph.graph import StateGraph, START, END
+import os
+import base64
+import requests
+import json
+from dotenv import load_dotenv
 
-# We will use this model for both the conversation and the summarization
-from langchain_openai import ChatOpenAI
-model = ChatOpenAI(model="gpt-4o", temperature=0) 
+load_dotenv()
 
-# State class to store messages and summary
-class State(MessagesState):
-    summary: str
-    
-# Define the logic to call the model
-def call_model(state: State):
-    
-    # Get summary if it exists
-    summary = state.get("summary", "")
+OWNER = os.getenv("GH_OWNER")
+REPO = os.getenv("GH_REPO")
+TOKEN = os.getenv("GH_TOKEN")
+BRANCH = os.getenv("GH_BRANCH", "main") 
 
-    # If there is summary, then we add it to messages
-    if summary:
-        
-        # Add summary to system message
-        system_message = f"Summary of conversation earlier: {summary}"
+def upload_folder_to_github(local_folder, repo_path, commit_message):
+    headers = {
+        "Authorization": f"token {TOKEN}",
+        "Accept": "application/vnd.github.v3+json"
+    }
 
-        # Append summary to any newer messages
-        messages = [SystemMessage(content=system_message)] + state["messages"]
-    
-    else:
-        messages = state["messages"]
-    
-    response = model.invoke(messages)
-    return {"messages": response}
+    for root, _, files in os.walk(local_folder):
+        for file_name in files:
+            local_file_path = os.path.join(root, file_name)
+            with open(local_file_path, "rb") as f:
+                content = base64.b64encode(f.read()).decode()
 
-# Determine whether to end or summarize the conversation
-def should_continue(state: State) -> Literal["summarize_conversation", "__end__"]:
-    
-    """Return the next node to execute."""
-    
-    messages = state["messages"]
-    
-    # If there are more than six messages, then we summarize the conversation
-    if len(messages) > 6:
-        return "summarize_conversation"
-    
-    # Otherwise we can just end
-    return END
+            relative_path = os.path.relpath(local_file_path, local_folder).replace("\\", "/")
+            github_file_path = f"{repo_path}/{relative_path}".strip("/")
 
-def summarize_conversation(state: State):
-    
-    # First get the summary if it exists
-    summary = state.get("summary", "")
+            url = f"https://api.github.com/repos/{OWNER}/{REPO}/contents/{github_file_path}"
 
-    # Create our summarization prompt 
-    if summary:
-        
-        # If a summary already exists, add it to the prompt
-        summary_message = (
-            f"This is summary of the conversation to date: {summary}\n\n"
-            "Extend the summary by taking into account the new messages above:"
-        )
-        
-    else:
-        # If no summary exists, just create a new one
-        summary_message = "Create a summary of the conversation above:"
+            # Get file SHA if it exists
+            response = requests.get(url, headers=headers)
+            sha = response.json().get("sha") if response.status_code == 200 else None
 
-    # Add prompt to our history
-    messages = state["messages"] + [HumanMessage(content=summary_message)]
-    response = model.invoke(messages)
-    
-    # Delete all but the 2 most recent messages and add our summary to the state 
-    delete_messages = [RemoveMessage(id=m.id) for m in state["messages"][:-2]]
-    return {"summary": response.content, "messages": delete_messages}
+            data = {
+                "message": commit_message,
+                "content": content,
+                "branch": BRANCH
+            }
+            if sha:
+                data["sha"] = sha
 
-# Define a new graph
-workflow = StateGraph(State)
-workflow.add_node("conversation", call_model)
-workflow.add_node(summarize_conversation)
+            put_response = requests.put(url, headers=headers, data=json.dumps(data))
+            if put_response.status_code in [200, 201]:
+                print(f"✅ Uploaded: {github_file_path}")
+            else:
+                print(f"❌ Failed to upload: {github_file_path}")
+                print(f"    Error: {put_response.status_code}, {put_response.text}")
 
-# Set the entrypoint as conversation
-workflow.add_edge(START, "conversation")
-workflow.add_conditional_edges("conversation", should_continue)
-workflow.add_edge("summarize_conversation", END)
 
-# Compile
-graph = workflow.compile()
+upload_folder_to_github(local_folder="downloaded_project", repo_path="", commit_message="Upload via script")
