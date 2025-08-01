@@ -1,51 +1,62 @@
+#this is just to check
 import os
-import base64
-import requests
-import json
 from dotenv import load_dotenv
+load_dotenv(override=True)
+os.environ["DEPLOYMENT_NAME"]=os.getenv("DEPLOYMENT_NAME")
+os.environ["OPENAI_API_TYPE"]=os.getenv("OPENAI_API_TYPE")
+os.environ["AZURE_OPENAI_ENDPOINT"]=os.getenv("AZURE_OPENAI_ENDPOINT")
+os.environ["OPENAI_API_VERSION"]=os.getenv("OPENAI_API_VERSION")
+os.environ["AZURE_OPENAI_API_KEY"]=os.getenv("AZURE_OPENAI_API_KEY")
+ 
+from langchain_openai import AzureChatOpenAI
+ 
+llm = AzureChatOpenAI(
+    deployment_name=os.environ["DEPLOYMENT_NAME"],
+    openai_api_version=os.environ["OPENAI_API_VERSION"],
+    azure_endpoint=os.environ["AZURE_OPENAI_ENDPOINT"],
+    openai_api_key=os.environ["AZURE_OPENAI_API_KEY"],
+    openai_api_type=os.environ["OPENAI_API_TYPE"]
+)
 
-load_dotenv()
-
-OWNER = os.getenv("GH_OWNER")
-REPO = os.getenv("GH_REPO")
-TOKEN = os.getenv("GH_TOKEN")
-BRANCH = os.getenv("GH_BRANCH", "main") 
-
-def upload_folder_to_github(local_folder, repo_path, commit_message):
-    headers = {
-        "Authorization": f"token {TOKEN}",
-        "Accept": "application/vnd.github.v3+json"
-    }
-
-    for root, _, files in os.walk(local_folder):
-        for file_name in files:
-            local_file_path = os.path.join(root, file_name)
-            with open(local_file_path, "rb") as f:
-                content = base64.b64encode(f.read()).decode()
-
-            relative_path = os.path.relpath(local_file_path, local_folder).replace("\\", "/")
-            github_file_path = f"{repo_path}/{relative_path}".strip("/")
-
-            url = f"https://api.github.com/repos/{OWNER}/{REPO}/contents/{github_file_path}"
-
-            # Get file SHA if it exists
-            response = requests.get(url, headers=headers)
-            sha = response.json().get("sha") if response.status_code == 200 else None
-
-            data = {
-                "message": commit_message,
-                "content": content,
-                "branch": BRANCH
-            }
-            if sha:
-                data["sha"] = sha
-
-            put_response = requests.put(url, headers=headers, data=json.dumps(data))
-            if put_response.status_code in [200, 201]:
-                print(f"✅ Uploaded: {github_file_path}")
-            else:
-                print(f"❌ Failed to upload: {github_file_path}")
-                print(f"    Error: {put_response.status_code}, {put_response.text}")
+from typing import Annotated
+from langgraph.graph import StateGraph, START, END
+from langgraph.graph.message import add_messages
+from langgraph.graph import StateGraph
+from langchain.schema import HumanMessage , SystemMessage
+from langgraph.checkpoint.memory import MemorySaver
+import gradio as gr
+from pydantic import BaseModel
 
 
-upload_folder_to_github(local_folder="downloaded_project", repo_path="", commit_message="Upload via script")
+
+class State(BaseModel):
+    messages: Annotated[list, add_messages]
+
+
+graph_builder = StateGraph(State)
+
+def chatbot(state: State):
+    return {"messages": [llm.invoke(state.messages)]}
+
+graph_builder.add_node("chatbot", chatbot)
+
+
+graph_builder.add_edge(START, "chatbot")
+graph_builder.add_edge("chatbot", END)
+memory = MemorySaver()
+
+graph = graph_builder.compile(checkpointer=memory)
+
+config = {"configurable": {"thread_id": "1"}}
+
+def chat(user_input: str, history):
+    user_message = HumanMessage(content=user_input)
+
+    #Add system promote according to your task
+    system_message = SystemMessage(content="You are a flight booking assistant for a travel agency. Your role is to assist with booking flights, providing timely updates, adhering to all safety protocols, and maintaining a high standard of observability for ongoing interactions. You are equipped to maintain long-term memory for the user's preferences and past interactions to ensure a personalized experience.")
+    messages = [system_message, user_message]
+    state = State(messages=messages)
+    result = graph.invoke(state, config=config)
+    return result["messages"][-1].content
+
+gr.ChatInterface(chat, type="messages").launch()
