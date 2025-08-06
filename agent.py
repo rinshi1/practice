@@ -59,4 +59,4 @@ def chat(user_input: str, history):
     result = graph.invoke(state, config=config)
     return result["messages"][-1].content
 
-gr.ChatInterface(chat, type="messages").launch()
+# gr.ChatInterface(chat, type="messages").launch()
