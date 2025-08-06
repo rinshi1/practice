@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="1" failures="0" skipped="0" tests="1" time="15.790" timestamp="2025-08-06T12:18:01.525953+05:30" hostname="INCHN-CG5073V6Y"><testcase classname="" name="practice.output.tests.test_integration_agent" time="0.000"><error message="collection failure">ImportError while importing test module 'D:\OneDrive - Olam International\Desktop\Test_Suite_Generator_agent\practice\output\tests\test_integration_agent.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+C:\Users\rinshi.kumari\AppData\Local\Programs\Python\Python312\Lib\importlib\__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+practice\output\tests\test_integration_agent.py:13: in &lt;module&gt;
+    from langgraph.schema import HumanMessage, SystemMessage
+E   ModuleNotFoundError: No module named 'langgraph.schema'</error></testcase></testsuite></testsuites>
