@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="16" skipped="0" tests="20" time="50.789" timestamp="2025-08-06T14:01:28.934941+05:30" hostname="INCHN-CG5073V6Y"><testcase classname="practice.output.tests.test_integration_agent" name="test_llm_initialization" time="1.841" /><testcase classname="practice.output.tests.test_integration_agent" name="test_full_workflow" time="3.223"><failure message="assert 'Mocked response' in &quot;Of course! I'd be happy to assist you with booking a flight. Could you please provide me with the following details so I can help you better?\n\n1. Departure city and destination city.\n2. Dates of travel (departure and return, if it's a round trip).\n3. Number of passengers and their age groups (adults, children, infants).\n4. Preferred class (Economy, Business, First).\n5. Any airline preferences.\n6. Any special requirements (e.g., meal preferences, assistance needs).\n\nFeel free to share as much information as possible, and I'll find the best options for you.&quot;">practice\output\tests\test_integration_agent.py:43: in test_full_workflow
+    assert "Mocked response" in response
+E   assert 'Mocked response' in "Of course! I'd be happy to assist you with booking a flight. Could you please provide me with the following details so I can help you better?\n\n1. Departure city and destination city.\n2. Dates of travel (departure and return, if it's a round trip).\n3. Number of passengers and their age groups (adults, children, infants).\n4. Preferred class (Economy, Business, First).\n5. Any airline preferences.\n6. Any special requirements (e.g., meal preferences, assistance needs).\n\nFeel free to share as much information as possible, and I'll find the best options for you."</failure></testcase><testcase classname="practice.output.tests.test_integration_agent" name="test_state_graph_transitions" time="0.006"><failure message="AttributeError: 'StateGraph' object has no attribute 'transition'">practice\output\tests\test_integration_agent.py:52: in test_state_graph_transitions
+    state_transitioned = sg.transition(sample_state)
+                         ^^^^^^^^^^^^^
+E   AttributeError: 'StateGraph' object has no attribute 'transition'</failure></testcase><testcase classname="practice.output.tests.test_integration_agent" name="test_validation_error_handling" time="0.005" /><testcase classname="practice.output.tests.test_integration_agent" name="test_async_operation" time="0.016"><failure message="AttributeError: 'AzureChatOpenAI' object has no attribute 'invoke'">C:\Users\rinshi.kumari\AppData\Local\Programs\Python\Python312\Lib\unittest\mock.py:1581: in __enter__
+    setattr(self.target, self.attribute, new_attr)
+myenv\Lib\site-packages\pydantic\main.py:997: in __setattr__
+    elif (setattr_handler := self._setattr_handler(name, value)) is not None:
+                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+myenv\Lib\site-packages\pydantic\main.py:1044: in _setattr_handler
+    raise ValueError(f'"{cls.__name__}" object has no field "{name}"')
+E   ValueError: "AzureChatOpenAI" object has no field "invoke"
+
+During handling of the above exception, another exception occurred:
+myenv\Lib\site-packages\pydantic\main.py:1084: in __delattr__
+    object.__delattr__(self, item)
+E   AttributeError: 'AzureChatOpenAI' object has no attribute 'invoke'
+
+During handling of the above exception, another exception occurred:
+practice\output\tests\test_integration_agent.py:67: in test_async_operation
+    with patch('agent.llm.invoke', new_callable=lambda: mock_invoke) as mock:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\rinshi.kumari\AppData\Local\Programs\Python\Python312\Lib\unittest\mock.py:1594: in __enter__
+    if not self.__exit__(*sys.exc_info()):
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\rinshi.kumari\AppData\Local\Programs\Python\Python312\Lib\unittest\mock.py:1605: in __exit__
+    delattr(self.target, self.attribute)
+myenv\Lib\site-packages\pydantic\main.py:1086: in __delattr__
+    raise AttributeError(f'{type(self).__name__!r} object has no attribute {item!r}')
+E   AttributeError: 'AzureChatOpenAI' object has no attribute 'invoke'</failure></testcase><testcase classname="practice.output.tests.test_integration_agent" name="test_env_config" time="0.002" /><testcase classname="practice.output.tests.test_integration_agent" name="test_state_persistence_and_update" time="0.003" /><testcase classname="practice.output.tests.test_integration_agent" name="test_varied_user_inputs[Check my booking status.]" time="3.098"><failure message="AssertionError: Failed for input: Check my booking status.&#10;assert 'Mocked response' in &quot;Sure! To check your booking status, I will need some details related to your reservation. Could you please provide one or more of the following?\n\n1. Your booking reference or confirmation number.\n2. The email address or phone number used to make the reservation.\n3. Your full name as it appears on the booking.\n\nWith this information, I'll be able to look up your booking and provide you with the latest status.&quot;">practice\output\tests\test_integration_agent.py:91: in test_varied_user_inputs
+    assert "Mocked response" in response, f"Failed for input: {user_input}"
+E   AssertionError: Failed for input: Check my booking status.
+E   assert 'Mocked response' in "Sure! To check your booking status, I will need some details related to your reservation. Could you please provide one or more of the following?\n\n1. Your booking reference or confirmation number.\n2. The email address or phone number used to make the reservation.\n3. Your full name as it appears on the booking.\n\nWith this information, I'll be able to look up your booking and provide you with the latest status."</failure></testcase><testcase classname="practice.output.tests.test_integration_agent" name="test_varied_user_inputs[Cancel my flight.]" time="2.008"><failure message="AssertionError: Failed for input: Cancel my flight.&#10;assert 'Mocked response' in &quot;I can assist you with canceling your flight. To proceed, could you please provide me with the following information?\n\n1. Your booking reference or confirmation number.\n2. The email address or phone number used to make the reservation.\n3. Your full name as it appears on the booking.\n\nAdditionally, it's important to note that cancellation policies and fees can vary based on the airline and fare type. I will provide you with any relevant details regarding those once I have your booking information.&quot;">practice\output\tests\test_integration_agent.py:91: in test_varied_user_inputs
+    assert "Mocked response" in response, f"Failed for input: {user_input}"
+E   AssertionError: Failed for input: Cancel my flight.
+E   assert 'Mocked response' in "I can assist you with canceling your flight. To proceed, could you please provide me with the following information?\n\n1. Your booking reference or confirmation number.\n2. The email address or phone number used to make the reservation.\n3. Your full name as it appears on the booking.\n\nAdditionally, it's important to note that cancellation policies and fees can vary based on the airline and fare type. I will provide you with any relevant details regarding those once I have your booking information."</failure></testcase><testcase classname="practice.output.tests.test_integration_agent" name="test_varied_user_inputs[Help with flight options.]" time="2.007"><failure message="AssertionError: Failed for input: Help with flight options.&#10;assert 'Mocked response' in &quot;Certainly! I'd be happy to help you explore flight options. Could you please provide me with the following details to tailor the options to your needs?\n\n1. Departure city and destination city.\n2. Preferred travel dates (departure and return, if it's a round trip).\n3. Number of passengers and their age groups (adults, children, infants).\n4. Preferred class (Economy, Business, First).\n5. Any airline preferences.\n6. Any special requirements (e.g., meal preferences, assistance needs).\n\nOnce I have this information, I'll find the best flight options for you!&quot;">practice\output\tests\test_integration_agent.py:91: in test_varied_user_inputs
+    assert "Mocked response" in response, f"Failed for input: {user_input}"
+E   AssertionError: Failed for input: Help with flight options.
+E   assert 'Mocked response' in "Certainly! I'd be happy to help you explore flight options. Could you please provide me with the following details to tailor the options to your needs?\n\n1. Departure city and destination city.\n2. Preferred travel dates (departure and return, if it's a round trip).\n3. Number of passengers and their age groups (adults, children, infants).\n4. Preferred class (Economy, Business, First).\n5. Any airline preferences.\n6. Any special requirements (e.g., meal preferences, assistance needs).\n\nOnce I have this information, I'll find the best flight options for you!"</failure></testcase><testcase classname="practice.output.tests.test_integration_agent" name="test_timeout_conditions" time="0.006"><failure message="AttributeError: 'AzureChatOpenAI' object has no attribute 'invoke'">C:\Users\rinshi.kumari\AppData\Local\Programs\Python\Python312\Lib\unittest\mock.py:1581: in __enter__
+    setattr(self.target, self.attribute, new_attr)
+myenv\Lib\site-packages\pydantic\main.py:997: in __setattr__
+    elif (setattr_handler := self._setattr_handler(name, value)) is not None:
+                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+myenv\Lib\site-packages\pydantic\main.py:1044: in _setattr_handler
+    raise ValueError(f'"{cls.__name__}" object has no field "{name}"')
+E   ValueError: "AzureChatOpenAI" object has no field "invoke"
+
+During handling of the above exception, another exception occurred:
+myenv\Lib\site-packages\pydantic\main.py:1084: in __delattr__
+    object.__delattr__(self, item)
+E   AttributeError: 'AzureChatOpenAI' object has no attribute 'invoke'
+
+During handling of the above exception, another exception occurred:
+practice\output\tests\test_integration_agent.py:98: in test_timeout_conditions
+    with patch('agent.llm.invoke', side_effect=mock_long_operation):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\rinshi.kumari\AppData\Local\Programs\Python\Python312\Lib\unittest\mock.py:1594: in __enter__
+    if not self.__exit__(*sys.exc_info()):
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\rinshi.kumari\AppData\Local\Programs\Python\Python312\Lib\unittest\mock.py:1605: in __exit__
+    delattr(self.target, self.attribute)
+myenv\Lib\site-packages\pydantic\main.py:1086: in __delattr__
+    raise AttributeError(f'{type(self).__name__!r} object has no attribute {item!r}')
+E   AttributeError: 'AzureChatOpenAI' object has no attribute 'invoke'</failure></testcase><testcase classname="practice.output.tests.test_unit_agent" name="test_state_initialization_happy_path" time="0.004"><failure message="AttributeError: 'dict' object has no attribute 'type'">practice\output\tests\test_unit_agent.py:34: in test_state_initialization_happy_path
+    assert state.messages[0].type == "system"
+           ^^^^^^^^^^^^^^^^^^^^^^
+E   AttributeError: 'dict' object has no attribute 'type'</failure></testcase><testcase classname="practice.output.tests.test_unit_agent" name="test_state_initialization_invalid_input" time="0.006"><failure message="Failed: DID NOT RAISE &lt;class 'pydantic_core._pydantic_core.ValidationError'&gt;">practice\output\tests\test_unit_agent.py:40: in test_state_initialization_invalid_input
+    with pytest.raises(ValidationError):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE &lt;class 'pydantic_core._pydantic_core.ValidationError'&gt;</failure></testcase><testcase classname="practice.output.tests.test_unit_agent" name="test_chatbot_function_happy_path" time="0.004"><failure message="AttributeError: 'AzureChatOpenAI' object has no attribute 'invoke'">C:\Users\rinshi.kumari\AppData\Local\Programs\Python\Python312\Lib\unittest\mock.py:1581: in __enter__
+    setattr(self.target, self.attribute, new_attr)
+myenv\Lib\site-packages\pydantic\main.py:997: in __setattr__
+    elif (setattr_handler := self._setattr_handler(name, value)) is not None:
+                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+myenv\Lib\site-packages\pydantic\main.py:1044: in _setattr_handler
+    raise ValueError(f'"{cls.__name__}" object has no field "{name}"')
+E   ValueError: "AzureChatOpenAI" object has no field "invoke"
+
+During handling of the above exception, another exception occurred:
+myenv\Lib\site-packages\pydantic\main.py:1084: in __delattr__
+    object.__delattr__(self, item)
+E   AttributeError: 'AzureChatOpenAI' object has no attribute 'invoke'
+
+During handling of the above exception, another exception occurred:
+practice\output\tests\test_unit_agent.py:46: in test_chatbot_function_happy_path
+    with patch('agent.llm.invoke', return_value=Mock(content="Flight booked to Paris")) as mock_invoke:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\rinshi.kumari\AppData\Local\Programs\Python\Python312\Lib\unittest\mock.py:1594: in __enter__
+    if not self.__exit__(*sys.exc_info()):
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\rinshi.kumari\AppData\Local\Programs\Python\Python312\Lib\unittest\mock.py:1605: in __exit__
+    delattr(self.target, self.attribute)
+myenv\Lib\site-packages\pydantic\main.py:1086: in __delattr__
+    raise AttributeError(f'{type(self).__name__!r} object has no attribute {item!r}')
+E   AttributeError: 'AzureChatOpenAI' object has no attribute 'invoke'</failure></testcase><testcase classname="practice.output.tests.test_unit_agent" name="test_chatbot_function_edge_case_empty_message" time="0.004"><failure message="AttributeError: 'AzureChatOpenAI' object has no attribute 'invoke'">C:\Users\rinshi.kumari\AppData\Local\Programs\Python\Python312\Lib\unittest\mock.py:1581: in __enter__
+    setattr(self.target, self.attribute, new_attr)
+myenv\Lib\site-packages\pydantic\main.py:997: in __setattr__
+    elif (setattr_handler := self._setattr_handler(name, value)) is not None:
+                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+myenv\Lib\site-packages\pydantic\main.py:1044: in _setattr_handler
+    raise ValueError(f'"{cls.__name__}" object has no field "{name}"')
+E   ValueError: "AzureChatOpenAI" object has no field "invoke"
+
+During handling of the above exception, another exception occurred:
+myenv\Lib\site-packages\pydantic\main.py:1084: in __delattr__
+    object.__delattr__(self, item)
+E   AttributeError: 'AzureChatOpenAI' object has no attribute 'invoke'
+
+During handling of the above exception, another exception occurred:
+practice\output\tests\test_unit_agent.py:55: in test_chatbot_function_edge_case_empty_message
+    with patch('agent.llm.invoke', return_value=Mock(content="Please provide more details")) as mock_invoke:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\rinshi.kumari\AppData\Local\Programs\Python\Python312\Lib\unittest\mock.py:1594: in __enter__
+    if not self.__exit__(*sys.exc_info()):
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\rinshi.kumari\AppData\Local\Programs\Python\Python312\Lib\unittest\mock.py:1605: in __exit__
+    delattr(self.target, self.attribute)
+myenv\Lib\site-packages\pydantic\main.py:1086: in __delattr__
+    raise AttributeError(f'{type(self).__name__!r} object has no attribute {item!r}')
+E   AttributeError: 'AzureChatOpenAI' object has no attribute 'invoke'</failure></testcase><testcase classname="practice.output.tests.test_unit_agent" name="test_chatbot_function_edge_case_long_message" time="0.004"><failure message="AttributeError: 'AzureChatOpenAI' object has no attribute 'invoke'">C:\Users\rinshi.kumari\AppData\Local\Programs\Python\Python312\Lib\unittest\mock.py:1581: in __enter__
+    setattr(self.target, self.attribute, new_attr)
+myenv\Lib\site-packages\pydantic\main.py:997: in __setattr__
+    elif (setattr_handler := self._setattr_handler(name, value)) is not None:
+                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+myenv\Lib\site-packages\pydantic\main.py:1044: in _setattr_handler
+    raise ValueError(f'"{cls.__name__}" object has no field "{name}"')
+E   ValueError: "AzureChatOpenAI" object has no field "invoke"
+
+During handling of the above exception, another exception occurred:
+myenv\Lib\site-packages\pydantic\main.py:1084: in __delattr__
+    object.__delattr__(self, item)
+E   AttributeError: 'AzureChatOpenAI' object has no attribute 'invoke'
+
+During handling of the above exception, another exception occurred:
+practice\output\tests\test_unit_agent.py:64: in test_chatbot_function_edge_case_long_message
+    with patch('agent.llm.invoke', return_value=Mock(content="Message too long to process")) as mock_invoke:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\rinshi.kumari\AppData\Local\Programs\Python\Python312\Lib\unittest\mock.py:1594: in __enter__
+    if not self.__exit__(*sys.exc_info()):
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\rinshi.kumari\AppData\Local\Programs\Python\Python312\Lib\unittest\mock.py:1605: in __exit__
+    delattr(self.target, self.attribute)
+myenv\Lib\site-packages\pydantic\main.py:1086: in __delattr__
+    raise AttributeError(f'{type(self).__name__!r} object has no attribute {item!r}')
+E   AttributeError: 'AzureChatOpenAI' object has no attribute 'invoke'</failure></testcase><testcase classname="practice.output.tests.test_unit_agent" name="test_chatbot_function_with_memory" time="0.004"><failure message="AttributeError: 'AzureChatOpenAI' object has no attribute 'invoke'">C:\Users\rinshi.kumari\AppData\Local\Programs\Python\Python312\Lib\unittest\mock.py:1581: in __enter__
+    setattr(self.target, self.attribute, new_attr)
+myenv\Lib\site-packages\pydantic\main.py:997: in __setattr__
+    elif (setattr_handler := self._setattr_handler(name, value)) is not None:
+                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+myenv\Lib\site-packages\pydantic\main.py:1044: in _setattr_handler
+    raise ValueError(f'"{cls.__name__}" object has no field "{name}"')
+E   ValueError: "AzureChatOpenAI" object has no field "invoke"
+
+During handling of the above exception, another exception occurred:
+myenv\Lib\site-packages\pydantic\main.py:1084: in __delattr__
+    object.__delattr__(self, item)
+E   AttributeError: 'AzureChatOpenAI' object has no attribute 'invoke'
+
+During handling of the above exception, another exception occurred:
+practice\output\tests\test_unit_agent.py:75: in test_chatbot_function_with_memory
+    with patch('agent.llm.invoke', return_value=Mock(content="Continuing from previous booking history")) as mock_invoke:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\rinshi.kumari\AppData\Local\Programs\Python\Python312\Lib\unittest\mock.py:1594: in __enter__
+    if not self.__exit__(*sys.exc_info()):
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\rinshi.kumari\AppData\Local\Programs\Python\Python312\Lib\unittest\mock.py:1605: in __exit__
+    delattr(self.target, self.attribute)
+myenv\Lib\site-packages\pydantic\main.py:1086: in __delattr__
+    raise AttributeError(f'{type(self).__name__!r} object has no attribute {item!r}')
+E   AttributeError: 'AzureChatOpenAI' object has no attribute 'invoke'</failure></testcase><testcase classname="practice.output.tests.test_unit_agent" name="test_chatbot_function_error_handling" time="0.004"><failure message="AttributeError: 'AzureChatOpenAI' object has no attribute 'invoke'">C:\Users\rinshi.kumari\AppData\Local\Programs\Python\Python312\Lib\unittest\mock.py:1581: in __enter__
+    setattr(self.target, self.attribute, new_attr)
+myenv\Lib\site-packages\pydantic\main.py:997: in __setattr__
+    elif (setattr_handler := self._setattr_handler(name, value)) is not None:
+                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+myenv\Lib\site-packages\pydantic\main.py:1044: in _setattr_handler
+    raise ValueError(f'"{cls.__name__}" object has no field "{name}"')
+E   ValueError: "AzureChatOpenAI" object has no field "invoke"
+
+During handling of the above exception, another exception occurred:
+myenv\Lib\site-packages\pydantic\main.py:1084: in __delattr__
+    object.__delattr__(self, item)
+E   AttributeError: 'AzureChatOpenAI' object has no attribute 'invoke'
+
+During handling of the above exception, another exception occurred:
+practice\output\tests\test_unit_agent.py:83: in test_chatbot_function_error_handling
+    with patch('agent.llm.invoke', side_effect=Exception("API error")) as mock_invoke:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\rinshi.kumari\AppData\Local\Programs\Python\Python312\Lib\unittest\mock.py:1594: in __enter__
+    if not self.__exit__(*sys.exc_info()):
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\rinshi.kumari\AppData\Local\Programs\Python\Python312\Lib\unittest\mock.py:1605: in __exit__
+    delattr(self.target, self.attribute)
+myenv\Lib\site-packages\pydantic\main.py:1086: in __delattr__
+    raise AttributeError(f'{type(self).__name__!r} object has no attribute {item!r}')
+E   AttributeError: 'AzureChatOpenAI' object has no attribute 'invoke'</failure></testcase><testcase classname="practice.output.tests.test_unit_agent" name="test_chat_parameterized[Find flights to Berlin-Flights found to Berlin]" time="0.005"><failure message="AttributeError: 'AzureChatOpenAI' object has no attribute 'invoke'">C:\Users\rinshi.kumari\AppData\Local\Programs\Python\Python312\Lib\unittest\mock.py:1581: in __enter__
+    setattr(self.target, self.attribute, new_attr)
+myenv\Lib\site-packages\pydantic\main.py:997: in __setattr__
+    elif (setattr_handler := self._setattr_handler(name, value)) is not None:
+                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+myenv\Lib\site-packages\pydantic\main.py:1044: in _setattr_handler
+    raise ValueError(f'"{cls.__name__}" object has no field "{name}"')
+E   ValueError: "AzureChatOpenAI" object has no field "invoke"
+
+During handling of the above exception, another exception occurred:
+myenv\Lib\site-packages\pydantic\main.py:1084: in __delattr__
+    object.__delattr__(self, item)
+E   AttributeError: 'AzureChatOpenAI' object has no attribute 'invoke'
+
+During handling of the above exception, another exception occurred:
+practice\output\tests\test_unit_agent.py:98: in test_chat_parameterized
+    with patch('agent.llm.invoke', return_value=Mock(content=expected_output)) as mock_invoke:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\rinshi.kumari\AppData\Local\Programs\Python\Python312\Lib\unittest\mock.py:1594: in __enter__
+    if not self.__exit__(*sys.exc_info()):
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\rinshi.kumari\AppData\Local\Programs\Python\Python312\Lib\unittest\mock.py:1605: in __exit__
+    delattr(self.target, self.attribute)
+myenv\Lib\site-packages\pydantic\main.py:1086: in __delattr__
+    raise AttributeError(f'{type(self).__name__!r} object has no attribute {item!r}')
+E   AttributeError: 'AzureChatOpenAI' object has no attribute 'invoke'</failure></testcase><testcase classname="practice.output.tests.test_unit_agent" name="test_chat_parameterized[Check my flight status-Your flight status is on time]" time="0.005"><failure message="AttributeError: 'AzureChatOpenAI' object has no attribute 'invoke'">C:\Users\rinshi.kumari\AppData\Local\Programs\Python\Python312\Lib\unittest\mock.py:1581: in __enter__
+    setattr(self.target, self.attribute, new_attr)
+myenv\Lib\site-packages\pydantic\main.py:997: in __setattr__
+    elif (setattr_handler := self._setattr_handler(name, value)) is not None:
+                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+myenv\Lib\site-packages\pydantic\main.py:1044: in _setattr_handler
+    raise ValueError(f'"{cls.__name__}" object has no field "{name}"')
+E   ValueError: "AzureChatOpenAI" object has no field "invoke"
+
+During handling of the above exception, another exception occurred:
+myenv\Lib\site-packages\pydantic\main.py:1084: in __delattr__
+    object.__delattr__(self, item)
+E   AttributeError: 'AzureChatOpenAI' object has no attribute 'invoke'
+
+During handling of the above exception, another exception occurred:
+practice\output\tests\test_unit_agent.py:98: in test_chat_parameterized
+    with patch('agent.llm.invoke', return_value=Mock(content=expected_output)) as mock_invoke:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\rinshi.kumari\AppData\Local\Programs\Python\Python312\Lib\unittest\mock.py:1594: in __enter__
+    if not self.__exit__(*sys.exc_info()):
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\rinshi.kumari\AppData\Local\Programs\Python\Python312\Lib\unittest\mock.py:1605: in __exit__
+    delattr(self.target, self.attribute)
+myenv\Lib\site-packages\pydantic\main.py:1086: in __delattr__
+    raise AttributeError(f'{type(self).__name__!r} object has no attribute {item!r}')
+E   AttributeError: 'AzureChatOpenAI' object has no attribute 'invoke'</failure></testcase></testsuite></testsuites>
